@@ -2,7 +2,6 @@ from db import db
 
 
 class StoreModel(db.Model):
-
     __tablename__ = 'stores'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
@@ -18,7 +17,11 @@ class StoreModel(db.Model):
     def json(self):
         # Lazy dynamic enabled, when this method is called, the database is accessed and a list of items
         # is returned.  This results in a slower return of items, but faster creation of Store.
-        return {'name': self.name, 'items': [item.json() for item in self.items]}
+        return {
+            'id': self.id,
+            'name': self.name,
+            'items': [item.json() for item in self.items]
+        }
 
     def save_to_db(self):
         db.session.add(self)
