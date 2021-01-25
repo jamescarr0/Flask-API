@@ -45,4 +45,4 @@ class Item(Resource):
 class ItemList(Resource):
     @jwt_required()
     def get(self):
-        return {"Items": [item.json() for item in ItemModel.query.all()]}, 200
+        return {"Items": [item.json() for item in ItemModel.find_all()]}, 200
