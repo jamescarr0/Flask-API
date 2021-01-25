@@ -1,6 +1,3 @@
-import sqlite3
-from flask_restful import reqparse
-
 from db import db
 
 
@@ -11,21 +8,16 @@ class ItemModel(db.Model):
     name = db.Column(db.String(80))
     price = db.Column(db.FLOAT(precision=2))
 
-    def __init__(self, name, price):
+    store_id = db.Column(db.Integer, db.ForeignKey('stores.id'))
+    store = db.relationship('StoreModel')
+
+    def __init__(self, name, price, store_id):
         self.name = name
         self.price = price
+        self.store_id = store_id
 
     def json(self):
         return {'name': self.name, 'price': self.price}
-
-    parser = reqparse.RequestParser()
-    # Parse request data and only allow 'price', dropping everything
-    # apart from what is allowed.
-    parser.add_argument('price',
-                        type=float,
-                        required=True,
-                        help="This field cannot be left blank"
-                        )
 
     @classmethod
     def find_by_name(cls, name):

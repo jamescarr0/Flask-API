@@ -15,11 +15,13 @@ class Item(Resource):
         if ItemModel.find_by_name(name):
             return {'message': 'item exists'}, 400
         data = request.get_json()
-        new_item = ItemModel(name, data['price'])
+        if 'price' and 'store_id' not in data:
+            return {'message': 'Items require price and store id'}
+
+        new_item = ItemModel(name, data['price'], data['store_id'])
         try:
             new_item.save_to_db()
-        except Exception as err:
-            print(err)
+        except:
             return {"message": "An error occurred"}, 500  # Internal server error (not users fault)
         return new_item.json(), 201
 
@@ -33,9 +35,9 @@ class Item(Resource):
         data = request.get_json()
         item = ItemModel.find_by_name(name)
         if item is None:
-            item = ItemModel(name, data['price'])
+            item = ItemModel(name, data['price'], data['store_id'])
         else:
-            item.price = data['price']
+            item.price = data['price'], data['store_id']
         item.save_to_db()
         return item.json(), 200
 
