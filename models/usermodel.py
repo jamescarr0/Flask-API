@@ -1,3 +1,5 @@
+from argon2 import PasswordHasher
+
 from db import db
 
 
@@ -7,9 +9,12 @@ class UserModel(db.Model):
     username = db.Column(db.String(80))
     password = db.Column(db.String(80))
 
+    # Create password hashing object. No params passed will use Argon2 Default values.
+    ph = PasswordHasher()
+
     def __init__(self, username, password):
         self.username = username
-        self.password = password
+        self.password = self.hash_password(password)
 
     def __repr__(self):
         return f"<User: _id: {self.id}, username: {self.username}>"
@@ -27,6 +32,15 @@ class UserModel(db.Model):
     def delete(self):
         db.session.delete(self)
         db.session.commit()
+
+    def verify_password(self, password):
+        try:
+            return self.ph.verify(self.password, password)
+        except:
+            return False
+
+    def hash_password(self, password):
+        return self.ph.hash(password)
 
     @classmethod
     def find_by_username(cls, username):

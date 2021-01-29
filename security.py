@@ -1,10 +1,9 @@
 from resources.user import UserModel
-from werkzeug.security import safe_str_cmp
 
 
 def authenticate(username, password):
     user = UserModel.find_by_username(username)
-    if user and safe_str_cmp(user.password, password):
+    if user and user.verify_password(password):
         return user
 
 
