@@ -14,7 +14,7 @@ class UserModel(db.Model):
 
     def __init__(self, username, password):
         self.username = username
-        self.password = self.hash_password(password)
+        self.password = self.ph.hash(password)
 
     def __repr__(self):
         return f"<User: _id: {self.id}, username: {self.username}>"
@@ -38,9 +38,6 @@ class UserModel(db.Model):
             return self.ph.verify(self.password, password)
         except:
             return False
-
-    def hash_password(self, password):
-        return self.ph.hash(password)
 
     @classmethod
     def find_by_username(cls, username):
