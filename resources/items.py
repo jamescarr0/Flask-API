@@ -1,6 +1,6 @@
 from flask import request
 from flask_restful import Resource
-from flask_jwt import jwt_required
+from flask_jwt_extended import jwt_required
 
 from models.itemmodel import ItemModel
 
@@ -43,6 +43,6 @@ class Item(Resource):
 
 
 class ItemList(Resource):
-    @jwt_required()
+    @jwt_required
     def get(self):
         return {"Items": [item.json() for item in ItemModel.find_all()]}, 200
