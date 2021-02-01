@@ -1,8 +1,14 @@
 from flask_restful import Resource
 from flask import request
-from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required
+from flask_jwt_extended import (
+    create_access_token,
+    create_refresh_token,
+    jwt_required,
+    get_raw_jwt
+)
 
 from api.models.usermodel import UserModel
+from api.auth.blacklist import BLACKLIST
 
 
 class UserRegister(Resource):
@@ -37,9 +43,8 @@ class User(Resource):
     User resource end points.
     """
 
-    @classmethod
     @jwt_required
-    def get(cls, user_id):
+    def get(self, user_id):
         """ Responds to the User GET request """
 
         # Retrieve user by user id.
@@ -47,9 +52,8 @@ class User(Resource):
         # Return user details if user found else return message.
         return (user.json(), 200) if user else ({'message': 'User not found'}, 404)
 
-    @classmethod
     @jwt_required
-    def delete(cls, user_id):
+    def delete(self, user_id):
         """ Responds to the User DELETE request """
 
         # Retrieve user by user id.
@@ -69,8 +73,7 @@ class UserLogin(Resource):
     for authentication when accessing protected resources / end points.
     """
 
-    @classmethod
-    def post(cls):
+    def post(self):
         """ Responds to the UserLogin POST request """
 
         # Get the request data.
@@ -83,9 +86,21 @@ class UserLogin(Resource):
         if user and user.verify_password(data['password']):
             # If credentials correct, return access & refresh tokens.
             return {
-                'access_token': create_access_token(identity=user.id, fresh=True),
-                'refresh_token': create_refresh_token(user.id)
-            }, 200
+                       'access_token': create_access_token(identity=user.id, fresh=True),
+                       'refresh_token': create_refresh_token(user.id)
+                   }, 200
 
         # username or password invalid.
         return {'message': 'Invalid credentials'}, 401
+
+
+class UserLogout(Resource):
+    """ User Logout endpoint """
+    @jwt_required
+    def post(self):
+        # Get the UUID of the current users JWT.
+        jti = get_raw_jwt()['jti']  # JWT ID - A UUID for a specific JWT.
+
+        # Add the jti - JWT UUID - to the blacklist to revoke the token.
+        BLACKLIST.add(jti)
+        return {'message': 'Successfully logged out.'}, 200

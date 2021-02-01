@@ -29,9 +29,9 @@ def expired_token_callback(error) -> tuple[dict[str, str], int]:
 
 
 @jwt.invalid_token_loader
-def invalid_token_callback() -> tuple[dict[str, str], int]:
+def invalid_token_callback(error) -> tuple[dict[str, str], int]:
     """ Request header contains invalid JWT data. """
-    return _response('Signature verification failed', 'invalid_token')
+    return _response('JWT Signature verification failed', error)
 
 
 @jwt.unauthorized_loader
@@ -58,4 +58,4 @@ def is_user_blacklisted(decrypted_token) -> bool:
     Checks if user is blacklisted and returns Bool.
     If User is blacklisted, the token_revoked_callback is then called
     """
-    return decrypted_token['identity'] in BLACKLIST
+    return decrypted_token['jti'] in BLACKLIST
