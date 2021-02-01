@@ -7,7 +7,7 @@ from flask_jwt_extended import (
     jwt_required
 )
 
-from models.itemmodel import ItemModel
+from api.models.itemmodel import ItemModel
 
 
 class Item(Resource):
