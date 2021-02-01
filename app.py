@@ -6,6 +6,7 @@ from db import db
 from resources.user import UserRegister, UserLogin, User
 from resources.items import ItemList, Item
 from resources.store import Store, StoreList
+from resources.token_refresh import TokenRefresh
 
 app = Flask(__name__)
 
@@ -26,6 +27,7 @@ api.add_resource(StoreList, '/stores')
 api.add_resource(ItemList, '/items')
 api.add_resource(UserRegister, '/register')
 api.add_resource(UserLogin, '/login')
+api.add_resource(TokenRefresh, '/refresh')
 
 
 @app.before_first_request
