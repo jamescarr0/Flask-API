@@ -5,6 +5,7 @@
 from api.auth import jwt
 from api.auth.blacklist import BLACKLIST
 
+
 def _response(msg: str, err: str, status_code=401) -> tuple[dict[str, str], int]:
     """
     Returns a custom JSON error response
