@@ -44,12 +44,8 @@ class User(Resource):
 
         # Retrieve user by user id.
         user = UserModel.find_by_userid(user_id)
-        if user:
-            # If user exists return user details.
-            return user.json()
-
-        # User does not exist.
-        return {'message': 'User not found'}, 404
+        # Return user details if user found else return message.
+        return user.json() if user else {'message': 'User not found'}, 404
 
     @classmethod
     @jwt_required
