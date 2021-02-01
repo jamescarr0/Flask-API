@@ -1,9 +1,9 @@
 from flask import request
 from flask_restful import Resource
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, jwt_optional, get_jwt_identity
 
 from models.itemmodel import ItemModel
-
+from models.usermodel import UserModel
 
 class Item(Resource):
 
@@ -43,6 +43,15 @@ class Item(Resource):
 
 
 class ItemList(Resource):
-    @jwt_required
+    @jwt_optional
     def get(self):
-        return {"Items": [item.json() for item in ItemModel.find_all()]}, 200
+        # Logged in users will have a JWT token containing user id.
+        # If logged in return all items.
+        if get_jwt_identity() is not None:  # UserModel.find_by_userid(get_jwt_identity()):
+            return [item.json() for item in ItemModel.find_all()], 200
+
+        # User not logged in.  Return item names only and message prompting more data available when logged in.
+        return {
+            "items": [item.name for item in ItemModel.find_all()],
+            "message": "Login for more data"
+        }, 200
