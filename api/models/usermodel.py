@@ -1,6 +1,6 @@
 from argon2 import PasswordHasher
 
-from db import db
+from api.db import db
 
 
 class UserModel(db.Model):

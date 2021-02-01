@@ -2,7 +2,7 @@
 .vscode/
 
 venv/
-data.db
+*.db
 __pycache__/
 
 *.pyc
