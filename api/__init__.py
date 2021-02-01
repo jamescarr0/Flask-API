@@ -1,12 +1,11 @@
 from flask import Flask
-from flask_jwt_extended import JWTManager
 from flask import Blueprint
 
 from api.db import db
+from api.auth import jwt
+from api.auth.errors import jwt_callbacks  # Custom JWT error responses.
 from api.config import Config  # Import application configuration variables.
 from api.resources import api  # Import the API resource endpoints.
-
-jwt = JWTManager()
 
 
 def create_app():
