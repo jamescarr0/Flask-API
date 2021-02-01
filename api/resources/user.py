@@ -45,7 +45,7 @@ class User(Resource):
         # Retrieve user by user id.
         user = UserModel.find_by_userid(user_id)
         # Return user details if user found else return message.
-        return user.json() if user else {'message': 'User not found'}, 404
+        return (user.json(), 200) if user else ({'message': 'User not found'}, 404)
 
     @classmethod
     @jwt_required
