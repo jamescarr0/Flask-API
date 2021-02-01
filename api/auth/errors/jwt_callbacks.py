@@ -3,7 +3,7 @@
 #############################################
 
 from api.auth import jwt
-
+from api.auth.blacklist import BLACKLIST
 
 def _response(msg: str, err: str, status_code=401) -> tuple[dict[str, str], int]:
     """
@@ -49,3 +49,12 @@ def fresh_token_required_callback() -> tuple[dict[str, str], int]:
 def token_revoked_callback() -> tuple[dict[str, str], int]:
     """ Token revoked error message """
     return _response('This token has been revoked', 'token_revoked')
+
+
+@jwt.token_in_blacklist_loader
+def is_user_blacklisted(decrypted_token) -> bool:
+    """
+    Checks if user is blacklisted and returns Bool.
+    If User is blacklisted, the token_revoked_callback is then called
+    """
+    return decrypted_token['identity'] in BLACKLIST
