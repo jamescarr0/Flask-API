@@ -1,38 +1,28 @@
 from flask import Flask
-from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from flask import Blueprint
 
 from api.db import db
-from api.config import Config
+from api.config import Config  # Import application configuration variables.
+from api.resources import api  # Import the API resource endpoints.
 
-api = Api()
 jwt = JWTManager()
 
 
 def create_app():
+    # Initialise the flask application
     app = Flask(__name__)
+
+    # Load flask configuration variables from Config object.
     app.config.from_object(Config)
 
+    # Initialise extension objects.
     db.init_app(app)
     api_blueprint = Blueprint('api', __name__)
     api.init_app(api_blueprint)
     jwt.init_app(app)
 
-    from api.resources.user import UserRegister, UserLogin, User
-    from api.resources.items import ItemList, Item
-    from api.resources.store import Store, StoreList
-    from api.resources.token_refresh import TokenRefresh
-
-    api.add_resource(Store, '/store/<string:name>')
-    api.add_resource(Item, '/item/<string:name>')
-    api.add_resource(User, '/user/<int:user_id>')
-    api.add_resource(StoreList, '/stores')
-    api.add_resource(ItemList, '/items')
-    api.add_resource(UserRegister, '/register')
-    api.add_resource(UserLogin, '/login')
-    api.add_resource(TokenRefresh, '/refresh')
-
+    # Register the API blueprint.
     app.register_blueprint(api_blueprint, url_prefix=Config.API_URL_PREFIX)
 
     @app.before_first_request
