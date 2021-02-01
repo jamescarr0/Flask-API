@@ -4,6 +4,7 @@ from flask_jwt_extended import JWTManager
 from flask import Blueprint
 
 from api.db import db
+from api.config import Config
 
 api = Api()
 jwt = JWTManager()
@@ -11,16 +12,11 @@ jwt = JWTManager()
 
 def create_app():
     app = Flask(__name__)
-
-    app.secret_key = "do_not_use_in_production"
-    app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///data.db"
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['PROPAGATE_EXCEPTIONS'] = True
-
-    api_bp = Blueprint('api', __name__)
+    app.config.from_object(Config)
 
     db.init_app(app)
-    api.init_app(api_bp)
+    api_blueprint = Blueprint('api', __name__)
+    api.init_app(api_blueprint)
     jwt.init_app(app)
 
     from api.resources.user import UserRegister, UserLogin, User
@@ -37,7 +33,7 @@ def create_app():
     api.add_resource(UserLogin, '/login')
     api.add_resource(TokenRefresh, '/refresh')
 
-    app.register_blueprint(api_bp, url_prefix='/')
+    app.register_blueprint(api_blueprint, url_prefix=Config.API_URL_PREFIX)
 
     @app.before_first_request
     def create_tables():
