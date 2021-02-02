@@ -3,9 +3,8 @@
 ## Installation
 ```
 pip install -r requirements.txt
-FLASK_APP=api. # Set environment variable according to os: eg: 'set FLASK_APP=api', '$env:FLASK_APP=api
+FLASK_APP=api. # or 'set FLASK_APP=api', '$env:FLASK_APP=api'
 flask run
-
 ```
 
 ## Features
