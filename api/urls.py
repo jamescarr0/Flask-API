@@ -1,11 +1,8 @@
-#########################################
-# API Resource configuration            #
-#                                       #
-# Add API Resources & Endpoints Here    #
-#########################################
+##################################
+# API Resources Endpoints / URLS #
+##################################
 
-# API framework.
-from flask_restful import Api
+from api import api
 
 # API Resource objects
 from api.resources.user import UserRegister, UserLogin, UserLogout, User
@@ -13,9 +10,7 @@ from api.resources.items import ItemList, Item
 from api.resources.store import Store, StoreList
 from api.resources.token_refresh import TokenRefresh
 
-api = Api()
-
-# API Endpoints. (Resource Class, 'URL/Endpoint/<string:variables>'
+# API Endpoints. (Resource Class, 'URL/Endpoint/<type:variable>')
 api.add_resource(Store, '/store/<string:name>')
 api.add_resource(Item, '/item/<string:name>')
 api.add_resource(User, '/user/<int:user_id>')

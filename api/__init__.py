@@ -1,11 +1,14 @@
 from flask import Flask
 from flask import Blueprint
+from flask_restful import Api
+from flask_sqlalchemy import SQLAlchemy
 
-from api.db import db
-from api.auth import jwt
 from api.auth.errors import jwt_callbacks  # Custom JWT error responses.
 from api.config import Config  # Import application configuration variables.
-from api.resources import api  # Import the API resource endpoints.
+from api.auth import jwt
+
+db = SQLAlchemy()
+api = Api()
 
 
 def create_app():
@@ -17,11 +20,13 @@ def create_app():
 
     # Initialise extension objects.
     db.init_app(app)
-    api_blueprint = Blueprint('api', __name__)
-    api.init_app(api_blueprint)
     jwt.init_app(app)
 
-    # Register the API blueprint.
+    api_blueprint = Blueprint('api', __name__)
+    api.init_app(api_blueprint)
+
+    # Import resource endpoints / URLS and register API blueprint.
+    from api import urls
     app.register_blueprint(api_blueprint, url_prefix=Config.API_URL_PREFIX)
 
     @app.before_first_request
